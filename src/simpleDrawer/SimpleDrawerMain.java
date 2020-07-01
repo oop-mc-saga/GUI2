@@ -33,6 +33,7 @@ public class SimpleDrawerMain extends javax.swing.JFrame {
         eraser = new JToggleButton("ERASER");
         eraser.setFont(font);
         eraser.addActionListener(e -> eraserActionPerformed(e));
+        eraser.setSelected(false);
         menuBar.add(eraser);
         eraserColor = eraser.getBackground();
         //線幅
