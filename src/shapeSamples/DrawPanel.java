@@ -67,17 +67,6 @@ public class DrawPanel extends javax.swing.JPanel {
         //直線
         g.setColor(new Color(30, 20, 100));
         g.draw(new Line2D.Double(0., 0., 800., 700.));
-        //多角形
-        g.setColor(Color.ORANGE);
-        double x[]={50.,300.,700.,500.,400.};
-        double y[]={200.,50.,300.,600.,300.};
-        Path2D.Double path = new Path2D.Double();
-        path.moveTo(x[0], y[0]);//開始点
-        for(int i=1;i<x.length;i++){//線で結ぶ
-            path.lineTo(x[i], y[i]);
-        }
-        path.closePath();//経路を閉じる
-        g.fill(path);
     }
 
     /**
