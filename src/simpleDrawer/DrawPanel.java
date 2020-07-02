@@ -13,7 +13,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import utils.FileIO;
@@ -24,14 +23,14 @@ public class DrawPanel extends javax.swing.JPanel
     private BufferedImage image = null;
     private Point point = null;
     private BasicStroke stroke = null;
+    private BasicStroke eraserStroke = null;
     private boolean eraser = false;
-    private BasicStroke eraserStroke;//消しゴム用ストローク
-
     /**
      * Creates new form DrawPanel
      */
     public DrawPanel() {
         initComponents();
+
     }
 
     /**
@@ -41,7 +40,7 @@ public class DrawPanel extends javax.swing.JPanel
         initializeImage();
         addMouseListener(this);
         addMouseMotionListener(this);
-        stroke = new BasicStroke(1, BasicStroke.CAP_ROUND,
+        stroke = new BasicStroke(1.f, BasicStroke.CAP_ROUND,
                 BasicStroke.JOIN_ROUND);
         eraserStroke = new BasicStroke(20.0f,
                 BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
@@ -98,7 +97,8 @@ public class DrawPanel extends javax.swing.JPanel
         if (w < 1) {
             w = 1;
         }
-        stroke = new BasicStroke((float) w, BasicStroke.CAP_ROUND,
+        stroke = new BasicStroke(
+                (float) w, BasicStroke.CAP_ROUND,
                 BasicStroke.JOIN_ROUND);
     }
 
@@ -115,10 +115,10 @@ public class DrawPanel extends javax.swing.JPanel
     private void lineSegment(int x, int y) {
         Graphics2D g = (Graphics2D) image.getGraphics();
         if (eraser) {//消しゴムの場合
-            g.setColor(this.getBackground());
+            g.setColor(getBackground());
             g.setStroke(eraserStroke);
         } else {
-            g.setColor(this.getForeground());
+            g.setColor(getForeground());
             g.setStroke(stroke);
         }
         //前の点から現在の点へ線を引く

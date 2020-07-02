@@ -16,8 +16,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class SimpleDrawerMain extends javax.swing.JFrame {
 
-    private final Color erasingColor = Color.RED;
-    private final Color eraserColor;
     private final JToggleButton eraser;
     private final JLabel label2;
     private final Font font;
@@ -34,8 +32,9 @@ public class SimpleDrawerMain extends javax.swing.JFrame {
         eraser.setFont(font);
         eraser.addActionListener(e -> eraserActionPerformed(e));
         eraser.setSelected(false);
+        setEraserColor(false);
+        
         menuBar.add(eraser);
-        eraserColor = eraser.getBackground();
         //線幅
         label2 = new JLabel("Line WIdth");
         label2.setFont(font);
@@ -83,11 +82,6 @@ public class SimpleDrawerMain extends javax.swing.JFrame {
     private void setEraserColor(boolean b) {
         drawPanel.setEraser(b);
         eraser.setSelected(b);
-        if (eraser.isSelected()) {
-            eraser.setBackground(erasingColor);
-        } else {
-            eraser.setBackground(eraserColor);
-        }
     }
 
     /**
