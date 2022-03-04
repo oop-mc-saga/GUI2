@@ -23,27 +23,25 @@ public class DrawPanel extends javax.swing.JPanel
     private BufferedImage image = null;
     private Point point = null;
     private BasicStroke stroke = null;
-    private BasicStroke eraserStroke = null;
     private boolean eraser = false;
+    private BasicStroke eraserStroke;//Stroke for eraser
+
     /**
      * Creates new form DrawPanel
      */
     public DrawPanel() {
         initComponents();
-
     }
 
     /**
-     * 初期化：イメージ初期化、イベントリスナー登録、線属性初期化
+     * initialize image, register listener, initialize stroke
      */
     public void initialize() {
         initializeImage();
         addMouseListener(this);
         addMouseMotionListener(this);
-        stroke = new BasicStroke(1.f, BasicStroke.CAP_ROUND,
-                BasicStroke.JOIN_ROUND);
-        eraserStroke = new BasicStroke(20.0f,
-                BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+        stroke = new BasicStroke();
+        eraserStroke = new BasicStroke(20.0f);
     }
 
     @Override
@@ -51,55 +49,61 @@ public class DrawPanel extends javax.swing.JPanel
         if (image == null) {
             return;
         }
-        //イメージを表示する
+        //show image
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), this);
     }
 
     /**
-     * 描画イメージを初期化する
+     * initialize image
      */
     public void initializeImage() {
         Dimension dimension = getPreferredSize();
-        //空のイメージ生成
+        //create new image
         image = new BufferedImage(dimension.width, dimension.height,
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(this.getBackground());//背景色で塗りつぶし
+        g.setColor(this.getBackground());//fill with background color
         g.fillRect(0, 0, dimension.width, dimension.height);
     }
 
     /**
-     * イメージの保存
+     * Save image
      *
-     * @param file 保存先ファイル
+     * @param file destination file
      */
     public void saveImage(File file) {
         if (!fileChooser.FileUtilGUI.checkWritable(file)) {
             return;
         }
-        try ( FileOutputStream out = new FileOutputStream(file)) {
-            String ext = FileIO.getExtention(file.getName());
-            javax.imageio.ImageIO.write(image, ext, out);
-            String message
-                    = "イメージを" + file.getName() + "に保存しました。";
-            fileChooser.FileUtilGUI.showMessage(message);
-        } catch (IOException ex) {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+        } catch (FileNotFoundException ex) {
             fileChooser.FileUtilGUI.showError(ex.getMessage());
+        }
+        if (out != null) {
+            String ext = FileIO.getExtention(file.getName());
+            try {
+                javax.imageio.ImageIO.write(image, ext, out);
+                String message
+                        = "Save image in " + file.getName();
+                fileChooser.FileUtilGUI.showMessage(message);
+            } catch (IOException ex) {
+                fileChooser.FileUtilGUI.showError(ex.getMessage());
+            }
         }
     }
 
     /**
-     * 線幅変更
+     * Change line width
      *
-     * @param w 新しい線幅
+     * @param w new line width
      */
     public void setLineWidth(int w) {
         if (w < 1) {
             w = 1;
         }
-        stroke = new BasicStroke(
-                (float) w, BasicStroke.CAP_ROUND,
-                BasicStroke.JOIN_ROUND);
+        stroke = new BasicStroke((float) w);
     }
 
     public void setEraser(boolean eraser) {
@@ -107,26 +111,7 @@ public class DrawPanel extends javax.swing.JPanel
     }
 
     /**
-     * 直前の点と現在の点を結ぶ
-     *
-     * @param x
-     * @param y
-     */
-    private void lineSegment(int x, int y) {
-        Graphics2D g = (Graphics2D) image.getGraphics();
-        if (eraser) {//消しゴムの場合
-            g.setColor(getBackground());
-            g.setStroke(eraserStroke);
-        } else {
-            g.setColor(getForeground());
-            g.setStroke(stroke);
-        }
-        //前の点から現在の点へ線を引く
-        g.drawLine(point.x, point.y, x, y);
-    }
-
-    /**
-     * * マウスイベントの動作 **************************************
+     * * handling mouse events ***********************
      */
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -140,41 +125,41 @@ public class DrawPanel extends javax.swing.JPanel
     public void mouseExited(MouseEvent e) {
     }
 
-    /**
-     * マウスボタンを押す
-     *
-     * @param e
-     */
     @Override
     public void mousePressed(MouseEvent e) {
-        //新たな位置の生成
         point = new Point(e.getPoint());
     }
 
-    /**
-     * マウスボタンを離す
-     *
-     * @param e
-     */
     @Override
     public void mouseReleased(MouseEvent e) {
         if (point != null) {
-            lineSegment(e.getX(), e.getY());
-            point = null;//現在の点を消去
+            Graphics2D g = (Graphics2D) image.getGraphics();
+            if (eraser) {//eraser case
+                g.setColor(this.getBackground());
+                g.setStroke(eraserStroke);
+            } else {
+                g.setColor(this.getForeground());
+                g.setStroke(stroke);
+            }
+            g.drawLine(point.x, point.y, e.getX(), e.getY());
+            point = null;
         }
         repaint();
     }
 
-    /**
-     * マウスドラッグ
-     *
-     * @param e
-     */
     @Override
     public void mouseDragged(MouseEvent e) {
         if (point != null) {
-            lineSegment(e.getX(), e.getY());
-            point = new Point(e.getPoint());//現在の点を更新
+            Graphics2D g = (Graphics2D) image.getGraphics();
+            if (eraser) {//eraser case
+                g.setColor(this.getBackground());
+                g.setStroke(eraserStroke);
+            } else {
+                g.setColor(this.getForeground());
+                g.setStroke(stroke);
+            }
+            g.drawLine(point.x, point.y, e.getX(), e.getY());
+            point = new Point(e.getPoint());
         }
         repaint();
     }

@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 /**
- * ファイル操作関係のユーティリティ
+ * utilities for operating files
  *
  * @author tadaki
  */
@@ -18,10 +18,10 @@ public class FileIO {
     public static final String nl = System.getProperty("line.separator");
 
     /**
-     * ファイル名を指定してBufferedWriterを開く
+     * Open BufferedWriter by specifing filename
      *
      * @param filename
-     * @return 開いたBufferedWriter
+     * @return BufferedWriter
      * @throws IOException
      */
     public static BufferedWriter openWriter(String filename)
@@ -35,11 +35,11 @@ public class FileIO {
         return new BufferedWriter(new OutputStreamWriter(fStream));
     }
 
-        /**
-     * カンマ区切りで、対象オブジェクトを出力する
+    /**
+     * Output objects with commas as delimitter
      *
-     * @param out 出力先
-     * @param objects 出力するオブジェクト列（不定）
+     * @param out destination
+     * @param objects list of objects
      * @throws IOException
      */
     public static void writeCSV(BufferedWriter out, Object... objects)
@@ -48,10 +48,10 @@ public class FileIO {
     }
 
     /**
-     * スペース区切りで、対象オブジェクトを出力する
+     * Output objects with space as delimitter
      *
-     * @param out 出力先
-     * @param objects 出力するオブジェクト列（不定）
+     * @param out destination
+     * @param objects list of objects
      * @throws IOException
      */
     public static void writeSSV(BufferedWriter out, Object... objects)
@@ -60,24 +60,24 @@ public class FileIO {
     }
 
     /**
-     * 任意の区切り文字で、対象オブジェクトを出力する
+     * Output objects with specified delimitter
      *
-     * @param out 出力先
-     * @param sep 区切り文字
-     * @param objects 出力するオブジェクト列（不定）
+     * @param out densination
+     * @param sep delimitter
+     * @param objects list of objects
      * @throws IOException
      */
     public static void writeVars(
             BufferedWriter out, char sep, Object... objects)
             throws IOException {
-        //objectを区切り文字で転結した文字列を生成
+        //connect objects with delimitter
         String str = object2String(sep, objects);
         out.write(str);
         out.newLine();
     }
 
     /**
-     * ファイル名を指定してBufferedReaderを開く
+     * Open BufferedReader by specified filename
      *
      * @param filename
      * @return
@@ -95,7 +95,7 @@ public class FileIO {
     }
 
     /**
-     * 空白を区切り文字として、一行読みだす
+     * Read one line with space as delimitter
      *
      * @param in
      * @return
@@ -107,7 +107,7 @@ public class FileIO {
     }
 
     /**
-     * カンマを区切り文字として、一行読みだす
+     * Read one line with comma as delimitter
      *
      * @param in
      * @return
@@ -119,11 +119,11 @@ public class FileIO {
     }
 
     /**
-     * BufferedReaderから一行読み、sepで分割した文字列配列を返す
+     * Read one line with specified delimitter
      *
-     * @param in 入力
-     * @param sep 文字列の分割を指定する正規表現
-     * @return 文字列
+     * @param in input
+     * @param sep delimitter (regex allowed)
+     * @return output
      * @throws java.io.IOException
      */
     public static String[] readVars(BufferedReader in, String sep)
@@ -136,7 +136,7 @@ public class FileIO {
     }
     
     /**
-     * Readerから内容を読みだし、文字列として返す
+     * Read lines from Reader
      *
      * @param in
      * @return
@@ -151,9 +151,9 @@ public class FileIO {
         return sb.toString();
     }
     /**
-     * Objectを区切り文字で連結する
+     * Combine objects with delimitter
      *
-     * @param sep　区切り文字
+     * @param sep　delimitter
      * @param objects
      * @return
      */
@@ -168,7 +168,7 @@ public class FileIO {
     }
     
     /**
-     * ファイル名中の拡張子を調べる
+     * Investigate file extention
      *
      * @param filename
      * @return 拡張子の文字列
@@ -183,5 +183,5 @@ public class FileIO {
             }
         }
         return ext;
-    }
+    }   
 }

@@ -1,3 +1,9 @@
+/*
+ * DrawPanel.java
+ *
+ * Created on 2008/11/21, 18:28
+ * @author  tadaki
+ */
 package shapeSamples;
 
 import java.awt.Color;
@@ -8,12 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import utils.FileIO;
 
-/*
- * DrawPanel.java
- *
- * Created on 2008/11/21, 18:28
- * @author  tadaki
- */
 public class DrawPanel extends javax.swing.JPanel {
 
     private BufferedImage image = null;
@@ -31,7 +31,7 @@ public class DrawPanel extends javax.swing.JPanel {
         if (image == null) {
             return;
         }
-        //ここではimageを貼り付けるだけ
+        //put image
         g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), this);
     }
 
@@ -40,52 +40,65 @@ public class DrawPanel extends javax.swing.JPanel {
     }
 
     /**
-     * 描画イメージを初期化する
+     * initialize image
      */
     private void initializeImage() {
         Dimension dimension = getPreferredSize();
-        //空のイメージ生成
+        //create new image
         image = new BufferedImage(dimension.width, dimension.height,
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(this.getBackground());//背景色で塗りつぶし
+        g.setColor(this.getBackground());//fill with background color
         g.fillRect(0, 0, dimension.width, dimension.height);
     }
 
     /**
-     * 描画イメージ生成
+     * Create image
      */
     public void drawSamples() {
         initializeImage();
         Graphics2D g = (Graphics2D) image.getGraphics();
-        //四角形
+        //rectangle
+        Rectangle2D.Double rect
+                = new Rectangle2D.Double(50., 50., 100., 100.);
         g.setColor(Color.GREEN);
-        g.fill(new Rectangle2D.Double(100., 100., 400., 400.));
-        //楕円
+        g.fill(rect);
+        //ellipse
+        Ellipse2D.Double ellipse
+                = new Ellipse2D.Double(200., 200., 100., 50.);
         g.setColor(Color.RED);
-        g.draw(new Ellipse2D.Double(500., 500., 200., 100.));
-        //直線
+        g.draw(ellipse);
+        //straight line
         g.setColor(new Color(30, 20, 100));
-        g.draw(new Line2D.Double(0., 0., 800., 700.));
+        Line2D.Double line = new Line2D.Double(0., 0., 400., 300.);
+        g.draw(line);
     }
 
     /**
-     * イメージをファイルへ保存
+     * save image to file
      *
-     * @param file 保存先ファイル
+     * @param file destination
      */
     public void saveImage(File file) {
         if (!fileChooser.FileUtilGUI.checkWritable(file)) {
             return;
         }
-        try ( FileOutputStream out = new FileOutputStream(file)) {
-            String ext = FileIO.getExtention(file.getName());
-            javax.imageio.ImageIO.write(image, ext, out);
-            String message
-                    = "イメージを" + file.getName() + "に保存しました。";
-            fileChooser.FileUtilGUI.showMessage(message);
-        } catch (IOException ex) {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+        } catch (FileNotFoundException ex) {
             fileChooser.FileUtilGUI.showError(ex.getMessage());
+        }
+        if (out != null) {
+            String ext = FileIO.getExtention(file.getName());
+            try {
+                javax.imageio.ImageIO.write(image, ext, out);
+                String message
+                        = "Image is saved to " + file.getName();
+                fileChooser.FileUtilGUI.showMessage(message);
+            } catch (IOException ex) {
+                fileChooser.FileUtilGUI.showError(ex.getMessage());
+            }
         }
     }
 
@@ -100,7 +113,6 @@ public class DrawPanel extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(400, 400));
-        setPreferredSize(new java.awt.Dimension(800, 800));
         setVerifyInputWhenFocusTarget(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

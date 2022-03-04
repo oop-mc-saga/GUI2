@@ -6,38 +6,40 @@ import javax.swing.JOptionPane;
 import utils.FileIO;
 
 /**
- * fileChooserに関連したファイル関係の処理
+ * Methods operating files for fileChooser
+ * 
  * @author tadaki
  */
 public class FileUtilGUI {
 
     /**
-     * このクラスのインスタンスは作らない
+     * Prevent creating instances
      */
     private FileUtilGUI() {
     }
 
     /**
-     * fileの内容を文字列として返す
+     * Return content of file as string
      *
-     * @param file 読み込むfile
-     * @return fileから読み込まれた文字列
+     * @param file specify file
+     * @return content of file
      */
     static public String openFile(File file) {
-        if (!file.canRead()) {//ファイルが読めることを確認
-            showError(file.getName() + " は読めません");
+        if (!file.canRead()) {//Conform the file readable
+            showError("Can not read "+file.getName());
             return null;
         }
-        //読み出し開始
+        //Start reading file
         BufferedReader in;
         try {
-            in = FileIO.openReader(file);//readerを開く
+            in = FileIO.openReader(file);//Open reader
         } catch (IOException ex) {
             showError(ex.getMessage());
             return null;
         }
         try {
-            String str = FileIO.readFromReader(in);//readerから読み出し
+            //Reading from the reader
+            String str = FileIO.readFromReader(in);
             return str;
         } catch (IOException ex) {
             showError(ex.getMessage());
@@ -46,18 +48,18 @@ public class FileUtilGUI {
     }
 
     /**
-     * textAreaの内容をfileに保存する。
+     * Save text to file
      *
-     * @param file　保存先file
-     * @param text 保存する文字列
+     * @param file specify file
+     * @param text text for saving
      */
     static public void saveFile(File file, String text) {
-        if (!checkWritable(file)) {//ファイルに書けることを確認
-            //checkWritableの中からエラー送信済
+        if (!checkWritable(file)) {//Confirm the file writable
+            //If not writable, checkWritable() returns exception
             return;
         }
         try {
-            //保存開始
+            //Start writing
             BufferedWriter out;
             try {
                 out = FileIO.openWriter(file);
@@ -73,26 +75,26 @@ public class FileUtilGUI {
     }
 
     /**
-     * file への書き込み可能性を確認
+     * Confirm the file writable
      *
      * @param file
-     * @return 書き込み可能ならばtrue
+     * @return 
      */
     static public boolean checkWritable(File file) {
         boolean isWritable = true;
-        if (file.isFile()) {//ファイルが存在する場合
-            if (!file.canWrite()) {//上書き可能性の確認
-                showError(file.getName() + " に書き込めません");
+        if (file.isFile()) {//Confirm the file existing
+            if (!file.canWrite()) {//Overwritable?
+                showError("Can not write to " + file.getName());
                 return false;
             } else {
                 if (!checkOverwrite(file.getName())) {
                     return false;
                 }
             }
-        } else {
+        } else {//New file
             try {
-                if (!file.createNewFile()) {//新規ファイル作成
-                    showError(file.getName() + " を生成できません");
+                if (!file.createNewFile()) {//Create new file
+                    showError("Can not create " + file.getName());
                     return false;
                 }
             } catch (IOException ex) {
@@ -104,16 +106,16 @@ public class FileUtilGUI {
     }
 
     /**
-     * 上書き保存の確認ダイアログを表示
+     * Show dialog for confirming overwrite
      *
-     * @param filename　保存先ファイル名
-     * @return 上書きする場合true
+     * @param filename　File for saving
+     * @return 
      */
     static public boolean checkOverwrite(String filename) {
         boolean b = true;
-        String message = filename + "は存在します。上書きしますか？";
+        String message = filename + " exists. Do you overwrite?";
         int answer = JOptionPane.showConfirmDialog(
-                new JFrame(), message, "上書き確認",
+                new JFrame(), message, "Confirm overwrite",
                 JOptionPane.OK_CANCEL_OPTION);
         if (answer != JOptionPane.OK_OPTION) {
             b = false;
@@ -122,24 +124,24 @@ public class FileUtilGUI {
     }
 
     /**
-     * エラーを示すダイアログを表示
+     * Show error dialog
      *
-     * @param message エラーメッセージ
+     * @param message error message
      */
     static public void showError(String message) {
         JOptionPane.showMessageDialog(
-                new JFrame(), message, "エラー発生",
+                new JFrame(), message, "Error",
                 JOptionPane.ERROR_MESSAGE);
     }
 
     /**
-     * メッセージを示すダイアログを表示
+     * Show message dialog
      *
-     * @param message エラーメッセージ
+     * @param message
      */
     static public void showMessage(String message) {
         JOptionPane.showMessageDialog(
-                new JFrame(), message, "メッセージ",
+                new JFrame(), message, "Message",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
