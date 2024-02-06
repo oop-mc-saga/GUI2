@@ -15,7 +15,7 @@ import java.io.OutputStreamWriter;
  * @author tadaki
  */
 public class FileIO {
-    public static final String nl = System.getProperty("line.separator");
+    public static final String NL = System.getProperty("line.separator");
 
     /**
      * Open BufferedWriter by specifing filename
@@ -146,7 +146,7 @@ public class FileIO {
         StringBuilder sb=new StringBuilder();
         String line;
         while ((line = in.readLine()) != null) {
-            sb.append(line).append(nl);
+            sb.append(line).append(NL);
         }
         return sb.toString();
     }
